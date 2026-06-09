@@ -1,0 +1,22 @@
+# ETF数据文件（可通过 fetch_data.py 重新获取）
+data/*.csv
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# IDE
+.vscode/
+.idea/
+
+# 临时输出
+output/*.csv
+output/*.png
+
+# 系统
+.DS_Store
+Thumbs.db
+
+# WorkBuddy
+.workbuddy/
