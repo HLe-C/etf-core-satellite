@@ -14,11 +14,11 @@
 
 | 指标 | 策略 | 基准(HS300) |
 |------|:--:|:--:|
-| 年化收益 | **+5.48%** | +0.48% |
-| 超额年化 | **+5.00%** | — |
+| 年化收益 | **+5.05%** | +0.48% |
+| 超额年化 | **+4.57%** | — |
 | 最大回撤 | **-15.21%** | — |
-| 夏普比率 | **0.184** | — |
-| 交易笔数 | 101 笔（月均 1.6 笔） | — |
+| 夏普比率 | **0.158** | — |
+| 交易流水 | 277 条（月均约 4.4 条） | — |
 
 ## 快速开始
 
@@ -29,11 +29,35 @@ pip install akshare pandas numpy
 # 获取数据
 python fetch_data.py
 
+# 获取真实防守资产数据（货币/短债/国债 ETF，用于替代现金代理）
+python fetch_defensive_data.py
+
 # 运行回测（完整参数扫描）
 python param_sweep.py
 
 # 波动率缩放测试
 python vol_sweep.py
+
+# V2.3a 滚动窗口 + 2025 OOS 验证
+python rolling_window_v2.py
+
+# 生成执行层证据包与最新调仓建议
+python execution_report_v2.py
+
+# 研究 V2.3a 的恢复期变体
+python variant_research_v2.py
+
+# V2.4-rc1 候选报告
+python v24_candidate_report.py
+
+# V2.9 家庭可执行策略研究（黄金上限20%）
+python family_strategy_research_v2.py
+
+# V2.8 家庭策略压力测试
+python family_strategy_stress_v2.py
+
+# V2.9 最终候选报告、年度归因和执行规则
+python final_v29_report.py
 ```
 
 ## 项目结构
@@ -42,8 +66,17 @@ python vol_sweep.py
 etf_backtest/
 ├── backtest_v2.py       # V2.3 回测引擎（最终版）
 ├── fetch_data.py        # 数据获取（18只ETF + HS300基准）
+├── fetch_defensive_data.py # 防守资产数据获取（货币/短债/国债ETF）
 ├── param_sweep.py       # 参数扫描
 ├── vol_sweep.py         # 波动率缩放测试
+├── rolling_window_v2.py # V2.3a滚动窗口与2025 OOS验证
+├── execution_report_v2.py # 交易流水/持仓/年度归因/调仓建议
+├── variant_research_v2.py # 2024短板诊断与恢复期变体研究
+├── risk_return_sweep_v2.py # 多目标风险收益搜索
+├── v24_candidate_report.py # V2.4-rc1候选报告
+├── family_strategy_research_v2.py # 家庭策略：防守仓比例/低仓位/目标风险扫描
+├── family_strategy_stress_v2.py # 家庭策略：黄金收益/现金收益压力测试
+├── final_v29_report.py # V2.9最终候选报告/归因/执行规则
 ├── dd_analysis.py       # 回撤归因分析
 ├── strategy_log.md      # 策略版本日志
 ├── output/              # 输出报告和图表
@@ -60,7 +93,7 @@ etf_backtest/
 |------|:--:|:--:|:--:|------|
 | V2.1 | +6.37% | -19.40% | 0.173 | 纯技术分析，全市场选股 |
 | V2.2 | +5.24% | -16.44% | 0.175 | +MA20止损 + HS300熔断 |
-| V2.3 | **+5.48%** | **-15.21%** | **0.184** | **+熊市核心MA200过滤** |
+| V2.3 | **+5.05%** | **-15.21%** | **0.158** | **+熊市核心MA200过滤 + ATR止盈修复** |
 
 ## 策略规则（7条）
 

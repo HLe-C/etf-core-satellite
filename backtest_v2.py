@@ -48,6 +48,10 @@ class StrategyParams:
     fee_rate: float = 0.0001           # 单边万一
     initial_cash: float = 100_000.0
 
+    # 熔断
+    circuit_breaker_drop: float = -0.025
+    circuit_breaker_cooldown: int = 15
+
     # ATR止盈
     atr_period: int = 20
     atr_mult: float = 3.0              # 浮盈 > N倍ATR 触发止盈
@@ -163,6 +167,7 @@ class BacktestEngineV2:
 
         # 记录
         self.nav_history: List[Dict] = []
+        self.position_history: List[Dict] = []  # 每日持仓权重快照
         self.trade_log: List[Dict] = []       # 每笔交易理由
         self.monthly_log: List[Dict] = []     # 月度调仓理由
 
@@ -243,7 +248,7 @@ class BacktestEngineV2:
         else:
             return "range"
 
-    def _get_equity_target(self, state: str) -> float:
+    def _get_equity_target(self, state: str, date: pd.Timestamp = None) -> float:
         return {"bull": self.p.equity_bull, "range": self.p.equity_range, "bear": self.p.equity_bear}[state]
 
     def _get_core_weight(self, equity_target: float) -> float:
@@ -285,6 +290,23 @@ class BacktestEngineV2:
     def _get_price(self, sym: str, date: pd.Timestamp) -> Optional[float]:
         return self._get_close(sym, date)
 
+    def _record_position_snapshot(self, date: pd.Timestamp):
+        """记录当日收盘价下的持仓市值和权重。"""
+        row = {"date": date, "cash": self.cash}
+        total_value = self.cash
+        for sym, pos in self.positions.items():
+            close = self._get_close(sym, date)
+            value = pos.shares * close if close is not None and pos.shares > 0 else 0.0
+            row[f"{sym}_value"] = value
+            total_value += value
+
+        row["total_value"] = total_value
+        row["cash_weight"] = self.cash / total_value if total_value > 0 else 0.0
+        for sym in self.positions:
+            value = row.get(f"{sym}_value", 0.0)
+            row[f"{sym}_weight"] = value / total_value if total_value > 0 else 0.0
+        self.position_history.append(row)
+
     # ---------- 核心逻辑 ----------
 
     def _check_daily_risk(self, date: pd.Timestamp, total_value: float, i: int):
@@ -312,6 +334,10 @@ class BacktestEngineV2:
                 self.cash += proceeds
                 self.trade_log.append({
                     "date": date, "symbol": sym, "action": "MA20止损",
+                    "price": close,
+                    "shares": pos.shares,
+                    "amount": proceeds,
+                    "fee": pos.shares * close * self.p.fee_rate,
                     "reason": f"close({close:.3f}) < MA20({ind['MA20']:.3f})",
                 })
                 pos.shares = 0
@@ -325,7 +351,7 @@ class BacktestEngineV2:
                 if date in self.bench_data.index else None
             if prev_bench and curr_bench and prev_bench > 0:
                 daily_ret = curr_bench / prev_bench - 1
-                if daily_ret < -0.025:
+                if daily_ret < self.p.circuit_breaker_drop:
                     # 熔断：清仓所有卫星
                     for sym in self.p.satellite_pool:
                         pos = self.positions.get(sym)
@@ -336,12 +362,15 @@ class BacktestEngineV2:
                                 self.cash += proceeds
                                 self.trade_log.append({
                                     "date": date, "symbol": sym, "action": "熔断清仓",
+                                    "price": close,
+                                    "shares": pos.shares,
+                                    "amount": proceeds,
+                                    "fee": pos.shares * close * self.p.fee_rate,
                                     "reason": f"HS300单日跌{daily_ret:.2%}，触发熔断",
                                 })
                                 pos.shares = 0
                                 pos.cost_basis = 0.0
-                    # 冷却15个交易日
-                    self.cb_days_left = 15
+                    self.cb_days_left = self.p.circuit_breaker_cooldown
                     self.monthly_log.append({
                         "date": date,
                         "market_state": "CIRCUIT_BREAKER",
@@ -349,7 +378,7 @@ class BacktestEngineV2:
                         "core_weight": 0.50,
                         "selected_satellites": [],
                         "n_selected": 0,
-                        "sat_reasons": [f"熔断触发: HS300日跌{daily_ret:.2%}，冷却15日"],
+                        "sat_reasons": [f"熔断触发: HS300日跌{daily_ret:.2%}，冷却{self.p.circuit_breaker_cooldown}日"],
                         "total_value": total_value,
                     })
 
@@ -442,7 +471,7 @@ class BacktestEngineV2:
         if current_price is None:
             return target_weight, ""
 
-        pnl = pos.pnl_pct
+        pnl = current_price / pos.cost_basis - 1
         if pnl > self.p.atr_mult * atr / (pos.cost_basis or 1):
             # 止盈 1/3
             new_weight = target_weight * (2 / 3)
@@ -508,6 +537,8 @@ class BacktestEngineV2:
                 rebalance_count += 1
                 self._monthly_rebalance(date, total_value)
 
+            self._record_position_snapshot(date)
+
             # 进度
             if (i + 1) % 500 == 0:
                 print(f"  进度: {i+1}/{len(self.trade_dates)} ({date.date()}), NAV={total_value:.2f}")
@@ -525,7 +556,7 @@ class BacktestEngineV2:
             sat_reasons = [{"symbol": "-", "status": "熔断冷却", "reason": f"剩余{self.cb_days_left}日"}]
         else:
             state = self._get_market_state(date)
-            equity_target = self._get_equity_target(state)
+            equity_target = self._get_equity_target(state, date)
             core_weight = self._get_core_weight(equity_target)
             selected_sats, sat_reasons = self._select_satellites(date)
 
@@ -603,6 +634,13 @@ class BacktestEngineV2:
                                   new_shares if new_shares > 0 else 0)
                 pos.shares = new_shares
                 pos.entry_date = date
+                self.trade_log.append({
+                    "date": date, "symbol": sym, "action": "买入",
+                    "price": close, "shares": shares_to_buy,
+                    "amount": cost, "fee": shares_to_buy * close * self.p.fee_rate,
+                    "target_weight": target_w,
+                    "reason": "月度调仓至目标权重",
+                })
 
             elif diff_value < 0:
                 # 卖出
@@ -610,6 +648,13 @@ class BacktestEngineV2:
                 proceeds = shares_to_sell * close * (1 - self.p.fee_rate)
                 self.cash += proceeds
                 pos.shares -= shares_to_sell
+                self.trade_log.append({
+                    "date": date, "symbol": sym, "action": "卖出",
+                    "price": close, "shares": shares_to_sell,
+                    "amount": proceeds, "fee": shares_to_sell * close * self.p.fee_rate,
+                    "target_weight": target_w,
+                    "reason": "月度调仓至目标权重",
+                })
                 if pos.shares <= 0:
                     pos.cost_basis = 0.0
 
@@ -624,6 +669,10 @@ class BacktestEngineV2:
                         self.cash += proceeds
                         self.trade_log.append({
                             "date": date, "symbol": sym, "action": "清仓",
+                            "price": close,
+                            "shares": pos.shares,
+                            "amount": proceeds,
+                            "fee": pos.shares * close * self.p.fee_rate,
                             "reason": f"月度调仓，未入选卫星",
                         })
                         pos.shares = 0
@@ -640,6 +689,10 @@ class BacktestEngineV2:
                         self.cash += proceeds
                         self.trade_log.append({
                             "date": date, "symbol": sym, "action": "核心清仓",
+                            "price": close,
+                            "shares": pos.shares,
+                            "amount": proceeds,
+                            "fee": pos.shares * close * self.p.fee_rate,
                             "reason": f"非牛市且close < MA200，剔除核心",
                         })
                         pos.shares = 0
@@ -665,6 +718,13 @@ class BacktestEngineV2:
         df["drawdown"] = (df["nav"] / df["nav"].cummax() - 1)
 
         return df
+
+    def get_position_df(self) -> pd.DataFrame:
+        df = pd.DataFrame(self.position_history)
+        if df.empty:
+            return df
+        df["date"] = pd.to_datetime(df["date"])
+        return df.set_index("date")
 
     def get_metrics(self) -> Dict:
         df = self.get_nav_df()
