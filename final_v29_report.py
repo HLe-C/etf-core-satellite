@@ -175,6 +175,10 @@ def fmt_table(df: pd.DataFrame, columns: list[str]) -> list[str]:
 
 
 def write_execution_rules(defensive_symbol: str, defensive_name: str):
+    if defensive_symbol == "CASH_PROXY":
+        defensive_note = "- 当前防守仓仍为 2% 年化现金代理；正式执行前必须替换为真实可交易货币/短债 ETF。"
+    else:
+        defensive_note = f"- 当前防守仓已使用真实 ETF 数据：`{defensive_symbol}` {defensive_name}。"
     lines = [
         "# V2.9 最终候选执行规则",
         "",
@@ -184,7 +188,7 @@ def write_execution_rules(defensive_symbol: str, defensive_name: str):
         "- 60% 配置到风险策略。",
         "- 20% 配置到黄金 ETF：`518880`。",
         f"- 20% 配置到现金/短债仓：`{defensive_symbol}` {defensive_name}。",
-        "- 若真实短债/货币 ETF 数据不可用，则研究阶段暂用 2% 年化现金代理；正式执行前必须替换为真实可交易标的。",
+        defensive_note,
         "",
         "## 风险策略内部规则",
         "",
@@ -210,6 +214,10 @@ def write_report(
     defensive_symbol: str,
     defensive_name: str,
 ):
+    if defensive_symbol == "CASH_PROXY":
+        defensive_reflection = "- 现金/短债仓当前仍为代理口径，正式执行前必须替换为真实货币/短债 ETF。"
+    else:
+        defensive_reflection = f"- 现金/短债仓已替换为真实 ETF `{defensive_symbol}` {defensive_name}；后续若用于实盘，应继续检查流动性、费率、折溢价和申赎约束。"
     full = {k.replace("full_", ""): v for k, v in metrics.items() if k.startswith("full_")}
     oos = {k.replace("oos_2025_", ""): v for k, v in metrics.items() if k.startswith("oos_2025_")}
     lines = [
@@ -251,7 +259,7 @@ def write_report(
         "## 风险反思",
         "",
         "- 黄金在 2019-2025 样本中表现较强，因此最终版本设置 20% 黄金上限，避免策略过度依赖黄金。",
-        "- 现金/短债仓当前若仍为代理口径，正式执行前必须替换为真实货币/短债 ETF。",
+        defensive_reflection,
         "- 该策略适合课程研究和普通家庭配置框架展示，不构成投资建议。",
         "",
         "## AI 使用说明",
