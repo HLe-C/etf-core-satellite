@@ -429,13 +429,13 @@ V2.9 牺牲一部分黄金强周期收益，但换来更稳妥的资产配置叙
    - 已测试黄金收益缩放和现金收益敏感性。
    - 结论是正式主线应控制黄金仓位，不追求 30%-45% 黄金的最高回测指标。
 
-3. 年度归因：`output/v2.9_final_yearly_attribution.csv`
+3. 年度归因：`output/final/v2.9_final_yearly_attribution.csv`
    - 拆分风险策略、黄金、防守仓和交易成本贡献。
 
-4. 最终执行规则：`output/v2.9_final_execution_rules.md`
+4. 最终执行规则：`output/final/v2.9_final_execution_rules.md`
    - 明确月度调仓、60/20/20 权重、风险策略内部规则、黄金上限和防守仓要求。
 
-5. 大作业报告草稿：`output/v2.9_final_homework_report.md`
+5. 大作业报告草稿：`output/final/v2.9_final_homework_report.md`
    - 覆盖研究问题、最终策略、核心结果、年度归因、风险反思和 AI 使用说明。
 
 ### 当前口径

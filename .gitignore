@@ -10,6 +10,10 @@ __pycache__/
 # 临时输出
 output/*.csv
 output/*.png
+output/intermediate/*.csv
+output/intermediate/large/*.csv
+!output/intermediate/v2.7_family_strategy_research.csv
+!output/intermediate/v2.8_family_strategy_stress_summary.csv
 
 # 系统
 .DS_Store

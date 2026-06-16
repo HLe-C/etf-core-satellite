@@ -56,7 +56,9 @@ etf-core-satellite/
 ├── variant_research_v2.py          # 策略变体研究
 ├── risk_return_sweep_v2.py         # 风险收益参数扫描
 ├── data/                           # ETF 日线数据
-├── output/                         # 研究报告、指标表和净值表
+├── output/final/                   # V2.9 最终报告、指标表和净值表
+├── output/research_history/        # 各版本研究报告归档
+├── output/intermediate/            # 中间回测表格和审计数据
 └── strategy_log.md                 # 策略迭代日志
 ```
 
@@ -78,12 +80,12 @@ python final_v29_report.py
 
 ## 关键输出
 
-- `output/v2.9_final_homework_report.md`：面向作业提交的最终策略报告。
-- `output/v2.9_final_execution_rules.md`：普通家庭执行规则。
-- `output/v2.9_final_metrics.csv`：核心绩效指标。
-- `output/v2.9_final_nav.csv`：最终策略净值序列。
-- `output/v2.9_final_yearly_attribution.csv`：年度收益归因。
-- `output/v2.9_final_daily_attribution.csv`：日度归因明细。
+- `output/final/v2.9_final_homework_report.md`：面向作业提交的最终策略报告。
+- `output/final/v2.9_final_execution_rules.md`：普通家庭执行规则。
+- `output/final/v2.9_final_metrics.csv`：核心绩效指标。
+- `output/final/v2.9_final_nav.csv`：最终策略净值序列。
+- `output/final/v2.9_final_yearly_attribution.csv`：年度收益归因。
+- `output/final/v2.9_final_daily_attribution.csv`：日度归因明细。
 - `strategy_log.md`：从 V2.3 到 V2.9 的研究迭代记录。
 
 ## 版本演进

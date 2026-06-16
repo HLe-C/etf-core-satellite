@@ -28,7 +28,9 @@ from family_strategy_research_v2 import (
 )
 
 
-OUTPUT_DIR = Path(__file__).parent / "output"
+ROOT_OUTPUT_DIR = Path(__file__).parent / "output"
+OUTPUT_DIR = ROOT_OUTPUT_DIR / "final"
+INTERMEDIATE_OUTPUT_DIR = ROOT_OUTPUT_DIR / "intermediate"
 DATA_DIR = Path(__file__).parent / "data"
 FEE_RATE = 0.0001
 
@@ -175,7 +177,7 @@ def fmt_table(df: pd.DataFrame, columns: list[str]) -> list[str]:
 
 
 def maybe_load_v27_practical() -> dict | None:
-    path = OUTPUT_DIR / "v2.7_family_strategy_research.csv"
+    path = INTERMEDIATE_OUTPUT_DIR / "v2.7_family_strategy_research.csv"
     if not path.exists():
         return None
     df = pd.read_csv(path)
@@ -186,7 +188,7 @@ def maybe_load_v27_practical() -> dict | None:
 
 
 def maybe_load_stress_summary() -> pd.DataFrame | None:
-    path = OUTPUT_DIR / "v2.8_family_strategy_stress_summary.csv"
+    path = INTERMEDIATE_OUTPUT_DIR / "v2.8_family_strategy_stress_summary.csv"
     if not path.exists():
         return None
     df = pd.read_csv(path)
