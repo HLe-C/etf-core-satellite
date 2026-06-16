@@ -44,17 +44,13 @@ V2.9 不再把全部资金放入高波动风险策略，而是采用“风险策
 
 ```text
 etf-core-satellite/
-├── backtest_v2.py                  # 回测引擎：持仓、交易流水、风控和净值计算
-├── fetch_data.py                   # 获取风险 ETF 与沪深300基准数据
-├── fetch_defensive_data.py         # 获取货币/短债/国债等防守资产数据
-├── final_v29_report.py             # 生成 V2.9 最终报告、指标、净值和年度归因
-├── family_strategy_research_v2.py  # 家庭组合权重研究
-├── family_strategy_stress_v2.py    # 黄金/防守资产压力测试
-├── asset_universe_research_v2.py   # 标的池研究
-├── rolling_window_v2.py            # 滚动窗口与 2025 OOS 验证
-├── execution_report_v2.py          # 交易流水、持仓和调仓建议
-├── variant_research_v2.py          # 策略变体研究
-├── risk_return_sweep_v2.py         # 风险收益参数扫描
+├── scripts/                        # Python 脚本，按 README 中的运行顺序组织
+│   ├── fetch_data.py               # 获取风险 ETF 与沪深300基准数据
+│   ├── fetch_defensive_data.py     # 获取货币/短债/国债等防守资产数据
+│   ├── backtest_v2.py              # 回测引擎：持仓、交易流水、风控和净值计算
+│   ├── family_strategy_research_v2.py
+│   ├── family_strategy_stress_v2.py
+│   └── final_v29_report.py         # 生成 V2.9 最终报告、指标、净值和年度归因
 ├── data/                           # ETF 日线数据
 ├── output/final/                   # V2.9 最终报告、指标表和净值表
 ├── output/research_history/        # 各版本研究报告归档
@@ -69,13 +65,13 @@ etf-core-satellite/
 pip install akshare pandas numpy
 
 # 获取基础 ETF 数据
-python fetch_data.py
+python scripts/fetch_data.py
 
 # 获取真实防守资产数据：货币、短债、国债 ETF
-python fetch_defensive_data.py
+python scripts/fetch_defensive_data.py
 
 # 生成 V2.9 最终报告、年度归因、净值和执行规则
-python final_v29_report.py
+python scripts/final_v29_report.py
 ```
 
 ## 关键输出

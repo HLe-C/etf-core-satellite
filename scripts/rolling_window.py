@@ -15,7 +15,7 @@ from backtest_engine import (
     TARGET_WEIGHTS, ETF_CODES
 )
 
-DATA_DIR = Path(__file__).parent / "data"
+DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 WINDOW_MONTHS = 24
 STEP_MONTHS = 3
 

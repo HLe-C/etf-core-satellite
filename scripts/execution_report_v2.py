@@ -19,7 +19,7 @@ import pandas as pd
 from backtest_v2 import BacktestEngineV2, StrategyParams
 
 
-OUTPUT_DIR = Path(__file__).parent / "output"
+OUTPUT_DIR = Path(__file__).resolve().parent.parent / "output"
 BACKTEST_START = "2019-10-01"
 BACKTEST_END = "2024-12-31"
 FULL_END = "2025-12-31"

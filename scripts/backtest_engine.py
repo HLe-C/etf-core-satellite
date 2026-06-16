@@ -19,7 +19,7 @@ from pathlib import Path
 from dataclasses import dataclass
 from typing import Dict, List, Optional
 
-DATA_DIR = Path(__file__).parent / "data"
+DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 
 # ============================================================
 # 策略常量

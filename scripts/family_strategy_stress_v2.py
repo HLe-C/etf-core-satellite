@@ -25,8 +25,8 @@ from family_strategy_research_v2 import (
 )
 
 
-OUTPUT_DIR = Path(__file__).parent / "output"
-DATA_DIR = Path(__file__).parent / "data"
+OUTPUT_DIR = Path(__file__).resolve().parent.parent / "output"
+DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 FEE_RATE = 0.0001
 
 CANDIDATES = [

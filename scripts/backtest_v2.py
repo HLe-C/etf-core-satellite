@@ -11,8 +11,8 @@ import warnings
 
 warnings.filterwarnings("ignore")
 
-DATA_DIR = Path(__file__).parent / "data"
-OUTPUT_DIR = Path(__file__).parent / "output"
+DATA_DIR = Path(__file__).resolve().parent.parent / "data"
+OUTPUT_DIR = Path(__file__).resolve().parent.parent / "output"
 
 # ============ 策略参数（可调） ============
 

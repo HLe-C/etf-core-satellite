@@ -6,7 +6,7 @@ import pandas as pd
 from backtest_v2 import StrategyParams, BacktestEngineV2
 from pathlib import Path
 
-OUTPUT_DIR = Path(__file__).parent / "output"
+OUTPUT_DIR = Path(__file__).resolve().parent.parent / "output"
 
 
 def run_vol_sweep():

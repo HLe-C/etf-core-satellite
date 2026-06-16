@@ -10,5 +10,5 @@ This folder is organized by purpose:
 To regenerate the final deliverables:
 
 ```bash
-python final_v29_report.py
+python scripts/final_v29_report.py
 ```

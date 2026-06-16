@@ -7,7 +7,7 @@ import pandas as pd
 from pathlib import Path
 import time
 
-DATA_DIR = Path(__file__).parent / "data"
+DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 
 # ============ ETF 配置 ============
 

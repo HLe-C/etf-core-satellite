@@ -21,7 +21,7 @@ from rolling_window_v2 import available_benchmark_dates, generate_windows
 from variant_research_v2 import CoreMom20RecoveryEngine
 
 
-OUTPUT_DIR = Path(__file__).parent / "output"
+OUTPUT_DIR = Path(__file__).resolve().parent.parent / "output"
 
 ETF_NAMES = {
     "510300": "沪深300",

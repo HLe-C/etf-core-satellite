@@ -28,10 +28,10 @@ from family_strategy_research_v2 import (
 )
 
 
-ROOT_OUTPUT_DIR = Path(__file__).parent / "output"
+ROOT_OUTPUT_DIR = Path(__file__).resolve().parent.parent / "output"
 OUTPUT_DIR = ROOT_OUTPUT_DIR / "final"
 INTERMEDIATE_OUTPUT_DIR = ROOT_OUTPUT_DIR / "intermediate"
-DATA_DIR = Path(__file__).parent / "data"
+DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 FEE_RATE = 0.0001
 
 FINAL_WEIGHTS = {
@@ -206,7 +206,7 @@ def maybe_load_stress_summary() -> pd.DataFrame | None:
 
 def stress_table_lines(stress: pd.DataFrame | None) -> list[str]:
     if stress is None or stress.empty:
-        return ["暂无 V2.8 压力测试汇总文件；可运行 `python family_strategy_stress_v2.py` 生成。"]
+        return ["暂无 V2.8 压力测试汇总文件；可运行 `python scripts/family_strategy_stress_v2.py` 生成。"]
     names = {
         "v2.7_practical_60_30_10": "V2.7 实用候选 60/30/10",
         "v2.9_gold_cap20_60_20_20": "V2.9 黄金上限 60/20/20",

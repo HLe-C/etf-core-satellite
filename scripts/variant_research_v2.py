@@ -18,7 +18,7 @@ from backtest_v2 import BacktestEngineV2, StrategyParams
 from rolling_window_v2 import generate_windows, available_benchmark_dates
 
 
-OUTPUT_DIR = Path(__file__).parent / "output"
+OUTPUT_DIR = Path(__file__).resolve().parent.parent / "output"
 
 
 class CoreMA50RecoveryEngine(BacktestEngineV2):

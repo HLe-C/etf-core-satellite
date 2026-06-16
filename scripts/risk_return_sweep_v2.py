@@ -17,7 +17,7 @@ from backtest_v2 import BacktestEngineV2, StrategyParams
 from variant_research_v2 import CoreMom20RecoveryEngine
 
 
-OUTPUT_DIR = Path(__file__).parent / "output"
+OUTPUT_DIR = Path(__file__).resolve().parent.parent / "output"
 START = "2019-10-01"
 END = "2024-12-31"
 

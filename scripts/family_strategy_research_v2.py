@@ -19,8 +19,8 @@ import pandas as pd
 from backtest_v2 import BacktestEngineV2, StrategyParams
 
 
-OUTPUT_DIR = Path(__file__).parent / "output"
-DATA_DIR = Path(__file__).parent / "data"
+OUTPUT_DIR = Path(__file__).resolve().parent.parent / "output"
+DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 
 CASH_YIELD = 0.02
 RISK_FREE = 0.025

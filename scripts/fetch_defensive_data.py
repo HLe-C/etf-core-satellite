@@ -14,7 +14,7 @@ import akshare as ak
 import pandas as pd
 
 
-DATA_DIR = Path(__file__).parent / "data"
+DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 
 DEFENSIVE_ETFS = {
     "511880": "银华日利",

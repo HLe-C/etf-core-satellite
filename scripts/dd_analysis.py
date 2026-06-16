@@ -6,7 +6,7 @@ import numpy as np
 from backtest_v2 import StrategyParams, BacktestEngineV2
 from pathlib import Path
 
-OUTPUT_DIR = Path(__file__).parent / "output"
+OUTPUT_DIR = Path(__file__).resolve().parent.parent / "output"
 
 
 class DetailedBacktest(BacktestEngineV2):
