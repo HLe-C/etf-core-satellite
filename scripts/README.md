@@ -63,7 +63,7 @@ The Python files are grouped here. The recommended run order is below.
 ## 5. Final Deliverables
 
 15. `final_v29_report.py`  
-    Generate final V2.9 homework report, execution rules, NAV, metrics, and attribution tables into `output/final/`.
+    Generate final V2.9 homework HTML/Markdown report, SVG charts, execution rules, NAV, metrics, and attribution tables into `output/final/`.
 
 ## Legacy Report Builder
 
